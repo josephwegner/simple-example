@@ -25,19 +25,19 @@ tasksSchema.static "getAllFromCategory", (category, cb) ->
 	, cb
 
 tasksSchema.static "create", (data, cb) ->
-	newTask = new Task data
+	newTask = new Tasks data
 
 	newTask.save cb
 
 tasksSchema.static "updateById", (id, data, cb) ->
 	data.updated_at = Date.now()
 
-	@update { id: id }, data, cb
+	@update { _id: id }, data, cb
 
 
 tasksSchema.static "deleteById", (id, cb) ->
 	@remove
-		id: id
+		_id: id
 	, cb
 
 

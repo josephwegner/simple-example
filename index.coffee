@@ -18,7 +18,7 @@ kickoff = () ->
 				prefix: ["api", "v0"]
 				host: configs.host
 				port: configs.port
-				logLevel: 5
+				logLevel: 0
 
 			#Load Controllers
 			v0.Controller "tasks", require "#{__dirname}/api/v0/controllers/tasks.coffee"

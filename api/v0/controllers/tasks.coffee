@@ -11,11 +11,11 @@ TasksController =
 
 		getCategoryTasks:
 			method: "GET"
-			path: ["category", "*identifier"]
+			path: ["category", "*category"]
 
 		createTask: 
 			method: "POST"
-			path: [""]
+			path: []
 
 		updateTask:
 			method: "PUT"
@@ -78,7 +78,7 @@ TasksController =
 			req.on 'end', () =>
 				#You should do this in a try/catch, but I'm leaving it simple for the example
 				taskInfo = JSON.parse data
-				Tasks.create data, (err, task) =>
+				Tasks.create taskInfo, (err, task) =>
 					if err
 						console.log err
 						@responses.internalError res
@@ -98,7 +98,7 @@ TasksController =
 				req.on 'end', () =>
 					#You should do this in a try/catch, but I'm leaving it simple for the example
 					taskInfo = JSON.parse data
-					Tasks.updateById params.identifier, data, (err, task) =>
+					Tasks.updateById params.identifier, taskInfo, (err, task) =>
 						if err
 							console.log err
 							@responses.internalError res
