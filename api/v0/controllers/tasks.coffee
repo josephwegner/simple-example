@@ -27,7 +27,7 @@ TasksController =
 
 		completeTask:
 			method: "PUT"
-			path: ["*identifier"]
+			path: ["*identifier", "complete"]
 
 	actions:
 		getAllTasks: (req, res, params) ->
