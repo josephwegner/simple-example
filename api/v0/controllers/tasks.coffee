@@ -41,19 +41,26 @@ TasksController =
 					@responses.respond res, allTasks
 
 		getTask: (req, res, params) ->
-			Tasks = mongoose.model "Tasks"
 
-			Tasks.getById params.identifier, (err, task) =>
-				if err
-					console.log err
-					@responses.internalError res
-				else
-					@responses.respond res, task
+			if @helpers.isValidID params.identifier
+				Tasks = mongoose.model "Tasks"
+
+				Tasks.getById params.identifier, (err, task) =>
+					if err
+						console.log err
+						@responses.internalError res
+					else
+						if task
+							@responses.respond res, task
+						else
+							@responses.notAvailable res
+			else
+				@responses.notAvailable res
 
 		getCategoryTasks: (req, res, params) ->
 			Tasks = mongoose.model "Tasks"
 
-			Tasks.getAllFromCategory category, (err, catTasks) =>
+			Tasks.getAllFromCategory params.category, (err, catTasks) =>
 				if err
 					console.log err
 					@responses.internalError res
@@ -128,8 +135,7 @@ TasksController =
 
 
 	helpers: 
-		generateKey: (cb) ->
-			crypto.randomBytes 256, (err, buff) ->
-				cb? err, buff.toString 'hex'
+		isValidID: (id) ->
+			id.match /^[0-9a-fA-F]{24}$/
 
 module.exports = exports = TasksController
