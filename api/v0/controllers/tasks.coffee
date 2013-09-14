@@ -86,51 +86,62 @@ TasksController =
 						@responses.respond res, task
 
 		updateTask: (req, res, params) ->
-			Tasks = mongoose.model "Tasks"
 
-			data = ""
+			if @helpers.isValidID params.identifier
+				Tasks = mongoose.model "Tasks"
 
-			req.on 'data', (chunk) ->
-				data += chunk
+				data = ""
 
-			req.on 'end', () =>
-				#You should do this in a try/catch, but I'm leaving it simple for the example
-				taskInfo = JSON.parse data
-				Tasks.updateById params.identifier, data, (err, task) =>
+				req.on 'data', (chunk) ->
+					data += chunk
+
+				req.on 'end', () =>
+					#You should do this in a try/catch, but I'm leaving it simple for the example
+					taskInfo = JSON.parse data
+					Tasks.updateById params.identifier, data, (err, task) =>
+						if err
+							console.log err
+							@responses.internalError res
+						else
+							@responses.respond res, task
+			else
+				@responses.notAvailable res
+
+		deleteTask: (req, res, params) ->
+			if @helpers.isValidID params.identifier
+				Tasks = mongoose.model "Tasks"
+
+				Tasks.deleteById params.identifier, (err) =>
 					if err
 						console.log err
 						@responses.internalError res
 					else
-						@responses.respond res, task
+						@responses.respond res
 
-		deleteTask: (req, res, params) ->
-			Tasks = mongoose.model "Tasks"
-
-			Tasks.deleteById params.identifier, (err) =>
-				if err
-					console.log err
-					@responses.internalError res
-				else
-					@responses.respond res
+			else
+				@responses.notAvailable res
 
 		completeTask: (req, res, params) ->
-			Tasks = mongoose.model "Tasks"
+			if @helpers.isValidID params.identifier
+				Tasks = mongoose.model "Tasks"
 
-			Tasks.getById params.identifier, (err, task) =>
-				if err
-					console.log err
-					@responses.internalError res
-				else
-					if task.completed
-						#If the task is already completed, just return a 200 because it's already done
-						@responses.respond res
+				Tasks.getById params.identifier, (err, task) =>
+					if err
+						console.log err
+						@responses.internalError res
 					else
-						task.completed = true
-						task.save (err) =>
-							if err
-								@responses.internalError res
-							else
-								@responses.respond res
+						if task.completed
+							#If the task is already completed, just return a 200 because it's already done
+							@responses.respond res
+						else
+							task.completed = true
+							task.save (err) =>
+								if err
+									@responses.internalError res
+								else
+									@responses.respond res
+			else
+				@responses.notAvailable res
 
 
 
